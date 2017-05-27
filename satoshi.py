@@ -1,4 +1,5 @@
 import discord
+from discord.ext import commands
 import asyncio
 import poloniex
 import sys
@@ -31,6 +32,9 @@ async def on_message(message):
 
             response = cmdCoin(pair, exchange)
 
+        if cmd == "help":
+            response = cmdHelp()
+
         if response:
             await client.send_message(channel, response)
 
@@ -58,5 +62,19 @@ def cmdCoin(pair, exchange):
             return poloniex.getTickerMessage(ticker, pair)
     
     return "The currency pair `" + pair + "` was not found on `" + exchange + "`. Please try again."
+
+# Returns help message
+def cmdHelp():
+    intro = "Thank you for using Satoshi! This bot provides real time market data for cryptocurrencies on multiple exchanges.\n\n"
+    exchanges = "__**Supported Exchanges**__\n\nThe current supported exchanges are: `Poloniex`\n\n"
+    commands = "__**Commands**__\n\n"
+    cmdCoin = "`+coin <currency pair> <exchange>` - Returns market data for the specified coin/exchange. Example: `+coin BTC_LTC Poloniex`\n\n"
+    cmdHelp = "`+help` - Returns information about Satoshi\n\n"
+    lookup = """You may also retrieve data for up to three coins by simply including `$coin` anywhere in your message. 
+If a coin is present on mutiple exchanges, data will be returned from Poloniex. If you wish to specify the exchange, use the `+coin` command. 
+Example: `Wow, look at $ETC!`\n\n"""
+    github = "__**Github**__\n\nThis project can be found on Github at `https://github.com/cmsart/Satoshi`"
+
+    return intro + exchanges + commands + cmdCoin + cmdHelp + lookup.replace("\t", "") + github
 
 client.run(sys.argv[1])
