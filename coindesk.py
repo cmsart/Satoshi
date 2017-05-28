@@ -37,7 +37,9 @@ def getSupportedCurrencies():
     "XPF": "CFP Franc", "YER": "Yemeni Rial", "ZAR": "South African Rand", "ZMK": "Zambian Kwacha (pre-2013)", "ZMW": "Zambian Kwacha", 
     "ZWL": "Zimbabwean Dollar"}
 
-def getTickerData(currency = "USD"):
+def getTickerData(currency = None):
+    if currency is None:
+        currency = "USD"
     url = "http://api.coindesk.com/v1/bpi/currentprice/" + currency + ".json"
     currencies = getSupportedCurrencies()
 
