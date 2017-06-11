@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import asyncio
 import poloniex
+import bittrex
 import sys
 
 client = discord.Client()
@@ -27,7 +28,7 @@ async def on_message(message):
                 pair = words[1].upper()
                 exchange = words[2]
             except:
-                await client.send_message(channel, "The `$coin` command must be formatted like this: `$coin <currency_pair> <exchange>`.\n\n For example: `$coin BTC_ETH poloniex`.")
+                await client.send_message(channel, "The `+coin` command must be formatted like this: `+coin <currency_pair> <exchange>`\n\n For example: `+coin BTC_ETH poloniex`")
                 return
 
             response = cmdCoin(pair, exchange)
@@ -47,10 +48,8 @@ async def on_message(message):
                 break
             if word.startswith("$"):
                 coin = word[1:].upper()
-                pair = poloniex.getCurrencyPair(coin)
-                if pair:
-                    ticker = poloniex.getTickerData(pair)
-                    tickerMessage = poloniex.getTickerMessage(ticker, pair)
+                tickerMessage = findCoin(coin)
+                if tickerMessage:
                     calls += 1
                     await client.send_message(channel, tickerMessage)                    
 
@@ -60,7 +59,11 @@ def cmdCoin(pair, exchange):
         ticker = poloniex.getTickerData(pair)
         if ticker:
             return poloniex.getTickerMessage(ticker, pair)
-    
+    elif exchange == 'bittrex':
+        ticker = bittrex.getTickerData(pair)
+        if ticker:
+            return bittrex.getTickerMessage(ticker)
+
     return "The currency pair `" + pair + "` was not found on `" + exchange + "`. Please try again."
 
 # Returns help message
@@ -76,5 +79,19 @@ Example: `Wow, look at $ETC!`\n\n"""
     github = "__**Github**__\n\nThis project can be found on Github at `https://github.com/cmsart/Satoshi`"
 
     return intro + exchanges + commands + cmdCoin + cmdHelp + lookup.replace("\t", "") + github
+
+# Finds coin for $coin command
+def findCoin(coin):
+    pair = poloniex.getCurrencyPair(coin)
+    if pair:
+        ticker = poloniex.getTickerData(pair)
+        return poloniex.getTickerMessage(ticker, pair)
+
+    pair = bittrex.getCurrencyPair(coin)
+    if bittrex:
+        ticker = bittrex.getTickerData(pair)
+        return bittrex.getTickerMessage(ticker)
+
+    return None
 
 client.run(sys.argv[1])

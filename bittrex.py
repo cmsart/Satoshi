@@ -1,61 +1,67 @@
 import urllib.request, json
 
-def getAllCurrencyPairs():
-	["BTC", "LTC", "DOGE", "VTC", "PPC", "FTC", "RDD", "NXT", "DASH", "POT", "BLK", "EMC2", "MYR", "AUR", "UTC", 
-	"MZC", "EFL", "GLD", "FAIR", "SLR", "PTC", "GRS", "NLG", "RBY", "XWC", "MONA", "BITS", "OC", "THC", "ENRG", 
-	"SFR", "ERC", "NAUT", "VRC", "CURE", "BLC", "XC", "XDQ", "XBB", "HYPER", "CCN", "XMR", "CLOAK", "BSD", "CRYPT", 
-	"START", "KORE", "XDN", "TRK", "QTL", "TRUST", "NAV", "XST", "APEX", "BTCD", "VIA", "TRI", "UNO", "PINK", "IOC", 
-	"SDC", "MAX", "LXC", "BOB", "CANN", "FC2", "SSD", "J", "SYS", "NEOS", "DGB", "ROOT", "BTS", "BURST", "TIT", 
-	"BSTY", "PXI", "DGC", "SLG", "STV", "EXCL", "SWIFT", "ARCH", "NET", "GHC", "DOPE", "BLOCK", "ABY", "VIOR", "BYC",
-	"UFO", "XMG", "XQN", "BLITZ", "VPN", "BAY", "DTC", "AM", "METAL", "SPR", "VTR", "XPY", "XRP", "GAME", "GP",
-	"NXS", "COVAL", "FSC2", "SOON", "HZ", "XCP", "SJCX", "BITB", "XTC", "XVG", "GEO", "FLDC", "WBB", "GEMZ", "GRC",
-	"XCO", "MTR", "FLO", "U", "NBT", "XEM", "MUE", "XVC", "8BIT", "CLAM", "XSEED", "NTRN", "SLING", "DMD", "GAM",
-	"UNIT", "GRT", "VIRAL", "SPHR", "ARB", "OK", "ADC", "SNRG", "PKB", "TES", "CPC", "AEON", "BITZ", "ETH", "GCR",
-	"TX", "BCY", "PRIME", "EXP", "NEU", "SWING", "INFX", "SOIL", "OMNI", "USDT", "AMP", "AGRS", "XLM", "SPRTS",
-	"YBC", "BTA", "MEC", "BITCNY", "AMS", "SCRT", "SCOT", "CLUB", "BNT", "VOX", "MND", "EMC", "FCT", "MAID",
-	"FRK", "EGC", "SLS", "ORB", "STEPS", "RADS", "DCR", "SEC", "PIVX", "WARP", "CRBIT", "DES", "MEME", "STEEM",
-	"2GIVE", "LSK", "KR", "PDC", "DGD", "BRK", "WAVES", "RISE", "LBC", "SBD", "BRX", "DRACO", "ETC", "UNIQ",
-	"STRAT", "UNB", "SYNX", "TRIG", "EBST", "VRM", "XAUR", "SEQ", "SNGLS", "JWL", "REP", "SHIFT", "ARDR", "XZC",
-	"ANS", "ZEC", "ZCL", "IOP", "DAR", "GOLOS", "GBG", "UBQ", "HKG", "KMD", "SIB", "ION", "LMC", "QWARK", "CRW",
-	"SWT", "TIME", "MLN", "TKS", "ARK", "DYN", "MUSIC", "DTB", "INCNT", "GBYTE", "GNT", "NXC", "EDG", "LGD",
-	"TRST", "WINGS", "RLC", "GNO", "GUP", "LUN", "APX", "TKN", "HMQ", "ANT", "ZEN", "SC"]
+def getCurrencyPairs():
+    url = "https://bittrex.com/api/v1.1/public/getmarkets"
+    pairs = []
+
+    with urllib.request.urlopen(url) as url:
+        data = json.loads(url.read().decode())
+        coins = data["result"]
+        for coin in coins:
+            pairs.append(coin["BaseCurrency"] + "-" + coin["MarketCurrency"])
+
+    return pairs        
 
 def getReadableCoinName(coin):
-	{"BTC": "Bitcoin", "LTC": "Litecoin", "DOGE": "Dogecoin", "VTC": "Vertcoin", "PPC": "Peercoin", "FTC": "Feathercoin", 
-	"RDD": "ReddCoin", "NXT": "NXT", "DASH": "Dash", "POT": "PotCoin", "BLK": "BlackCoin", "EMC2": "Einsteinium", "MYR": "MyriadCoin", 
-	"AUR": "AuroraCoin", "UTC": "UltraCoin", "MZC": "MazaCoin", "EFL": "ElectronicGulden", "GLD": "GoldCoin", "FAIR": "FairCoin", 
-	"SLR": "SolarCoin", "PTC": "PesetaCoin ", "GRS": "Groestlcoin", "NLG": "Gulden", "RBY": "RubyCoin", "XWC": "WhiteCoin", 
-	"MONA": "MonaCoin", "BITS": "BitStarCoin", "OC": "OrangeCoin", "THC": "HempCoin", "ENRG": "EnergyCoin", "SFR": "SaffronCoin", 
-	"ERC": "EuropeCoin", "NAUT": "NautilusCoin", "VRC": "VeriCoin", "CURE": "CureCoin", "BLC": "BlakeCoin", "XC": "XCurrency", 
-	"XDQ": "Dirac", "XBB": "Boolberry", "HYPER": "Hyper", "CCN": "CannaCoin", "XMR": "Monero", "CLOAK": "CloakCoin", "BSD": "BitSend", 
-	"CRYPT": "CryptCoin", "START": "StartCoin", "KORE": "KoreCoin", "XDN": "DigitalNote", "TRK": "TruckCoin", "QTL": "Quatloo", 
-	"TRUST": "TrustPlus", "NAV": "NAVCoin", "XST": "StealthCoin", "APEX": "ApexCoin", "BTCD": "BitcoinDark", "VIA": "ViaCoin", 
-	"TRI": "Triangles", "UNO": "Unobtanium", "PINK": "PinkCoin", "IOC": "I/OCoin", "SDC": "ShadowCash", "MAX": "MaxCoin", "LXC": "LibrexCoin", 
-	"BOB": "DobbsCoin", "CANN": "CannabisCoin", "FC2": "FuelCoin", "SSD": "SonicCoin", "J": "JoinCoin", "SYS": "SysCoin", "NEOS": "NeosCoin", 
-	"DGB": "Digibyte", "ROOT": "RootCoin", "BTS": "BitShares", "BURST": "BURST", "TIT": "TitCoin", "BSTY": "GlobalBoost-Y", "PXI": "Prime-XI", 
-	"DGC": "DigitalCoin", "SLG": "Sterlingcoin", "STV": "SativaCoin", "EXCL": "ExclusiveCoin", "SWIFT": "Bitswift", "ARCH": "ArchCoin", 
-	"NET": "NetCoin", "GHC": "GamerholicCoin", "DOPE": "DopeCoin", "BLOCK": "BlockNet", "ABY": "ArtByte", "VIOR": "ViorCoin", "BYC": "Bytecent", 
-	"UFO": "UFOCoin", "XMG": "Magi", "XQN": "Quotient", "BLITZ": "Blitzcash", "VPN": "VPNCoin", "BAY": "BitBay", "DTC": "DayTraderCoin", 
-	"AM": "AeroME", "METAL": "MetalCoin", "SPR": "SpreadCoin", "VTR": "vTorrent", "XPY": "Paycoin", "XRP": "Ripple", "GAME": "GameCredits",
-	"GP": "GoldPieces", "NXS": "Nexus", "COVAL": "Circuits of Value", "FSC2": "FriendshipCoin2", "SOON": "SoonCoin", "HZ": "Horizon", 
-	"XCP": "Counterparty", "SJCX": "StorjCoinX", "BITB": "BitBean", "XTC": "TileCoin", "XVG": "Verge", "GEO": "GeoCoin", "FLDC": "FoldingCoin", 
-	"WBB": "Wild Beast Block", "GEMZ": "Gemz", "GRC": "GridCoin", "XCO": "X-Coin", "MTR": "MasterTraderCoin", "FLO": "Florin", "U": "UCoin", 
-	"NBT": "Nubits", "XEM": "NewEconomyMovement", "MUE": "MonetaryUnit", "XVC": "Vcash", "8BIT": "8bit", "CLAM": "CLAMs", "XSEED": "BitSeeds", 
-	"NTRN": "Neutron", "SLING": "Sling", "DMD": "Diamond", "GAM": "Gambit", "UNIT": "UniversalCurrency", "GRT": "Grantcoin", "VIRAL": "Viral", 
-	"SPHR": "Sphere", "ARB": "ArbitCoin", "OK": "OkCash", "ADC": "AudioCoin", "SNRG": "Synergy", "PKB": "ParkByte", "TES": "TeslaCoin", 
-	"CPC": "CapriCoin", "AEON": "Aeon", "BITZ": "Bitz", "ETH": "Ethereum", "GCR": "GlobalCurrencyReserve", "TX": "TransferCoin", "BCY": "BitCrystals", 
-	"PRIME": "PrimeChain", "EXP": "Expanse", "NEU": "NeuCoin", "SWING": "SwingCoin", "INFX": "InfluxCoin", "SOIL": "SOILcoin", "OMNI": "OmniCoin", 
-	"USDT": "Tether", "AMP": "SynereoAmp", "AGRS": "IDNI Agoras", "XLM": "Lumen", "SPRTS": "Sprouts", "YBC": "YBCoin", "BTA": "Bata", "MEC": "MegaCoin", 
-	"BITCNY": "BitCNY", "AMS": "AmsterdamCoin", "SCRT": "SecretCoin", "SCOT": "ScotCoin", "CLUB": "ClubCoin", "BNT": "Bantam", "VOX": "Voxels", 
-	"MND": "MindCoin", "EMC": "EmerCoin", "FCT": "Factom", "MAID": "MaidSafeCoin", "FRK": "Franko", "EGC": "EverGreenCoin", "SLS": "SaluS", 
-	"ORB": "OrbitCoin", "STEPS": "Steps", "RADS": "Radium", "DCR": "Decred", "SEC": "SafeExchangeCoin", "PIVX": "Pivx", "WARP": "WarpCoin", 
-	"CRBIT": "CreditBit", "DES": "Destiny", "MEME": "Memetic", "STEEM": "STEEM", "2GIVE": "2GIVE", "LSK": "Lisk", "KR": "Krypton", 
-	"PDC": "Project Decorum", "DGD": "Digix DAO", "BRK": "Breakout", "WAVES": "Waves", "RISE": "Rise", "LBC": "LBRY Credits", "SBD": "SteemDollars", 
-	"BRX": "Breakout Stake", "DRACO": "DT Token", "ETC": "Ethereum Classic", "UNIQ": "Uniqredit", "STRAT": "Stratis", "UNB": "UnbreakableCoin", 
-	"SYNX": "Syndicate", "TRIG": "TRIG Token", "EBST": "eBoost", "VRM": "Verium", "XAUR": "Xaurum", "SEQ": "Sequence", "SNGLS": "SingularDTV", 
-	"JWL": "Jewel", "REP": "Augur", "SHIFT": "Shift", "ARDR": "Ardor", "XZC": "ZCoin", "ANS": "AntShares", "ZEC": "ZCash", "ZCL": "Zclassic", 
-	"IOP": "Internet Of People", "DAR": "Darcrus", "GOLOS": "Golos", "GBG": "Gbg", "UBQ": "Ubiq", "HKG": "HackerGold", "KMD": "Komodo", 
-	"SIB": "Siberian Chervonets", "ION": "Ion", "LMC": "Lomocoin", "QWARK": "Qwark", "CRW": "Crown", "SWT": "Swarm City Token", "TIME": "Chronobank Time", 
-	"MLN": "Melon", "TKS": "Tokes", "ARK": "Ark", "DYN": "Dynamic", "MUSIC": "Musicoin", "DTB": "Databits", "INCNT": "Incent", "GBYTE": "Byteball", 
-	"GNT": "Golem", "NXC": "Nexium", "EDG": "Edgeless", "LGD": "Legends", "TRST": "Trustcoin", "WINGS": "Wings DAO", "RLC": "iEx.ec", "GNO": "Gnosis", 
-	"GUP": "Guppy", "LUN": "Lunyr", "APX": "Apx", "TKN": "TokenCard", "HMQ": "Humaniq", "ANT": "Aragon", "ZEN": "ZenCash", "SC": "Siacoin"}
+    url = "https://bittrex.com/api/v1.1/public/getcurrencies"
+    name = None
+
+    with urllib.request.urlopen(url) as url:
+        data = json.loads(url.read().decode())
+        coins = data["result"]
+        for trexCoin in coins:
+            if trexCoin["Currency"] == coin:
+                name = trexCoin["CurrencyLong"]
+
+    return name
+
+# Returns the currency pair for the given symbol
+def getCurrencyPair(coin, coinPair = "BTC"):
+    pairs = getCurrencyPairs()
+    pair = coinPair + "-" + coin
+    if pair in pairs:
+        return pair
+    else:
+        return None
+
+# Returns ticker data from Poloniex for the given currency pair
+def getTickerData(pair):
+    pair = pair.replace("_", "-")
+    url = "https://bittrex.com/api/v1.1/public/getmarketsummary?market=" + pair
+    pairs = getCurrencyPairs()
+
+    if pair in pairs:
+        with urllib.request.urlopen(url) as url:
+            ticker = json.loads(url.read().decode())
+            return ticker["result"]
+    else:
+        return None
+
+def getTickerMessage(ticker):
+    ticker = ticker[0]
+    pair = ticker["MarketName"]
+    coin = getReadableCoinName(pair.split("-")[1])
+    header = "**" + coin + " (" + pair.replace("-", "_") + ") - Bittrex**\n"
+    seperator = "-----------------------\n"
+    price = "Current Price: `" + "{:.8f}".format(ticker["Last"]) + "`\n"
+    high = "24hr High: `" + "{:.8f}".format(ticker["High"]) + "`\n"
+    low = "24hr Low: `" + "{:.8f}".format(ticker["Low"]) + "`\n"
+    volume = "24hr Volume: `" + "{:.8f}".format(ticker["BaseVolume"]) + "`\n"
+
+    changeNum = round(((ticker["Last"] - ticker["PrevDay"]) / ticker["PrevDay"]) * 100, 2)
+    sign = "+" if changeNum > 0 else ""
+    change = "Percent Change: ```diff\n" + sign + str(changeNum) + "%\n```"
+
+    message = header + seperator + price + volume + high + low + change
+
+    return message
