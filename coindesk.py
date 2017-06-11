@@ -37,22 +37,20 @@ def getSupportedCurrencies():
     "XPF": "CFP Franc", "YER": "Yemeni Rial", "ZAR": "South African Rand", "ZMK": "Zambian Kwacha (pre-2013)", "ZMW": "Zambian Kwacha", 
     "ZWL": "Zimbabwean Dollar"}
 
-def getTickerData(currency = None):
-    if currency is None:
-        currency = "USD"
+def getTickerData(currency):
     url = "http://api.coindesk.com/v1/bpi/currentprice/" + currency + ".json"
     currencies = getSupportedCurrencies()
 
     if currency in currencies:
         with urllib.request.urlopen(url) as url:
-            return json.loads(url.read().decode())
+            data = json.loads(url.read().decode())
+            return data["bpi"][currency]
     else:
-        return "`" + currency + "` is not a valid or supported currency."
+        return None
 
 def getTickerMessage(ticker):
-    code, data = ticker["bpi"].popitem()
-    header = "**Bitcoin (" + code + " - " + data["description"] + ") - CoinDesk Bitcoin Price Index**\n"
+    header = "**Bitcoin (" + ticker["code"] + " - " + ticker["description"] + ") - CoinDesk Bitcoin Price Index**\n"
     seperator = "-----------------------\n"
-    price = "Current Price: `" + str(data["rate_float"]) + " " + code + "`"
+    price = "Current Price: `" + str(ticker["rate_float"]) + " " + ticker["code"] + "`"
 
     return header + seperator + price

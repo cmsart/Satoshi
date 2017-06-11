@@ -89,7 +89,7 @@ def cmdBitcoin(currency):
     if isinstance(ticker, dict):
         return coindesk.getTickerMessage(ticker)
     else:
-        return ticker
+        return "`" + currency + "` is not a valid or supported currency."
 
 # Returns help message
 def cmdHelp():
@@ -108,6 +108,10 @@ If a coin is present on mutiple exchanges, data will be returned from Poloniex. 
 
 # Finds coin for $coin command
 def findCoin(coin):
+    if coin == "BTC":
+        ticker = coindesk.getTickerData("USD")
+        return coindesk.getTickerMessage(ticker)
+
     pair = poloniex.getCurrencyPair(coin)
     if pair:
         ticker = poloniex.getTickerData(pair)
