@@ -33,7 +33,9 @@ def getReadableCoinName(coin):
     return names[coin]
 
 # Returns the currency pair for the given symbol
-def getCurrencyPair(coin, coinPair = "BTC"):
+def getCurrencyPair(coin, coinPair = None):
+    if coinPair is None:
+        coinPair = "BTC"
     pairs = getCurrencyPairs()
     pair = coinPair + "_" + coin
     if pair in pairs:

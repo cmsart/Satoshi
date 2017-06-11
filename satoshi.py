@@ -1,8 +1,8 @@
 import discord
-from discord.ext import commands
 import asyncio
 import poloniex
 import bittrex
+import coindesk
 import sys
 
 client = discord.Client()
@@ -22,6 +22,7 @@ async def on_message(message):
 
     # Check if a possible command has been submitted
     if msg.startswith('+'):
+        response = None
         cmd = words[0][1:]
         if cmd == "coin":
             try:
@@ -33,11 +34,22 @@ async def on_message(message):
 
             response = cmdCoin(pair, exchange)
 
+        if cmd == "bitcoin":
+            try:
+                currency = words[1].upper()
+            except:
+                await client.send_message(channel, "The `+bitcoin` command must be formatted like this: `+bitcoin <currency>`.\n\n For example: `+bitcoin GBP`")
+                return
+
+            response = cmdBitcoin(currency)
+
         if cmd == "help":
             response = cmdHelp()
 
         if response:
             await client.send_message(channel, response)
+        else:
+            await client.send_message(channel, "`+" + cmd + "` is not a valid command. Type `+help` to get a list of valid commands.")
 
     # If no command, parse message for currency requests
     else:
@@ -66,19 +78,28 @@ def cmdCoin(pair, exchange):
 
     return "The currency pair `" + pair + "` was not found on `" + exchange + "`. Please try again."
 
+# Returns current market data for bitcoin
+def cmdBitcoin(currency):
+    ticker = coindesk.getTickerData(currency)
+    if isinstance(ticker, dict):
+        return coindesk.getTickerMessage(ticker)
+    else:
+        return ticker
+
 # Returns help message
 def cmdHelp():
     intro = "Thank you for using Satoshi! This bot provides real time market data for cryptocurrencies on multiple exchanges.\n\n"
     exchanges = "__**Supported Exchanges**__\n\nThe current supported exchanges are: `Poloniex`\n\n"
     commands = "__**Commands**__\n\n"
-    cmdCoin = "`+coin <currency pair> <exchange>` - Returns market data for the specified coin/exchange. Example: `+coin BTC_LTC Poloniex`\n\n"
+    cmdCoin = "`+coin <currency pair> <exchange>` - Returns market data for the specified coin/exchange.\nExample: `+coin BTC_LTC Poloniex`\n\n"
+    cmdBitcoin = "`+bitcoin <currency>` - Returns current bitcoin price for the specified currency.\nExample: `+bitcoin GBP`\n\n"
     cmdHelp = "`+help` - Returns information about Satoshi\n\n"
     lookup = """You may also retrieve data for up to three coins by simply including `$coin` anywhere in your message. 
 If a coin is present on mutiple exchanges, data will be returned from Poloniex. If you wish to specify the exchange, use the `+coin` command. 
 Example: `Wow, look at $ETC!`\n\n"""
     github = "__**Github**__\n\nThis project can be found on Github at `https://github.com/cmsart/Satoshi`"
 
-    return intro + exchanges + commands + cmdCoin + cmdHelp + lookup.replace("\t", "") + github
+    return intro + exchanges + commands + cmdCoin + cmdBitcoin + cmdHelp + lookup.replace("\t", "") + github
 
 # Finds coin for $coin command
 def findCoin(coin):
