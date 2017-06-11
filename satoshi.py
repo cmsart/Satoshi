@@ -20,6 +20,10 @@ async def on_message(message):
     channel = message.channel
     words = msg.split()
 
+    # Don't parse message if sent via PM or by the bot itself
+    if message.author == client.user or isinstance(message.channel, discord.PrivateChannel):
+        return
+
     # Check if a possible command has been submitted
     if msg.startswith('+'):
         response = None
@@ -45,6 +49,7 @@ async def on_message(message):
 
         if cmd == "help":
             response = cmdHelp()
+            channel = message.author
 
         if response:
             await client.send_message(channel, response)
@@ -89,14 +94,14 @@ def cmdBitcoin(currency):
 # Returns help message
 def cmdHelp():
     intro = "Thank you for using Satoshi! This bot provides real time market data for cryptocurrencies on multiple exchanges.\n\n"
-    exchanges = "__**Supported Exchanges**__\n\nThe current supported exchanges are: `Poloniex`\n\n"
+    exchanges = "__**Supported Exchanges**__\n\nThe current supported exchanges are: `Poloniex`, `Bittrex`\n\n"
     commands = "__**Commands**__\n\n"
-    cmdCoin = "`+coin <currency pair> <exchange>` - Returns market data for the specified coin/exchange.\nExample: `+coin BTC_LTC Poloniex`\n\n"
-    cmdBitcoin = "`+bitcoin <currency>` - Returns current bitcoin price for the specified currency.\nExample: `+bitcoin GBP`\n\n"
-    cmdHelp = "`+help` - Returns information about Satoshi\n\n"
-    lookup = """You may also retrieve data for up to three coins by simply including `$coin` anywhere in your message. 
-If a coin is present on mutiple exchanges, data will be returned from Poloniex. If you wish to specify the exchange, use the `+coin` command. 
-Example: `Wow, look at $ETC!`\n\n"""
+    cmdCoin = "`+coin <currency pair> <exchange>` - Returns market data for the specified coin/exchange.\n\n\t- Example: `+coin BTC_LTC Poloniex`\n\n"
+    cmdBitcoin = "`+bitcoin <currency>` - Returns current bitcoin price for the specified currency.\n\n\t- Example: `+bitcoin GBP`\n\n"
+    cmdHelp = "`+help` - Returns information about Satoshi.\n\n"
+    lookup = """__**Quick Lookup**__\n\nYou may also retrieve data for up to three coins by simply including `$coin` anywhere in your message. 
+If a coin is present on mutiple exchanges, data will be returned from Poloniex. If you wish to specify the exchange, use the `+coin` command.\n 
+    - Example: `Wow, look at $ETC`\n\n"""
     github = "__**Github**__\n\nThis project can be found on Github at `https://github.com/cmsart/Satoshi`"
 
     return intro + exchanges + commands + cmdCoin + cmdBitcoin + cmdHelp + lookup.replace("\t", "") + github
