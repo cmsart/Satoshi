@@ -6,7 +6,6 @@ import coindesk
 import sys
 
 client = discord.Client()
-pairs = poloniex.getCurrencyPairs()
 
 @client.event
 async def on_ready():
@@ -112,14 +111,15 @@ def findCoin(coin):
         ticker = coindesk.getTickerData("USD")
         return coindesk.getTickerMessage(ticker)
 
-    pair = poloniex.getCurrencyPair(coin)
-    if pair:
-        ticker = poloniex.getTickerData(pair)
+    # Default to Poloniex
+    pair = "BTC_" + coin
+    ticker = poloniex.getTickerData(pair)
+    if ticker:
         return poloniex.getTickerMessage(ticker, pair)
 
-    pair = bittrex.getCurrencyPair(coin)
-    if bittrex:
-        ticker = bittrex.getTickerData(pair)
+    # Check Bittrex if not found
+    ticker = bittrex.getTickerData(pair)
+    if ticker:
         return bittrex.getTickerMessage(ticker)
 
     return None

@@ -1,51 +1,28 @@
-import urllib.request, json
-
-def getCurrencyPairs():
-    url = "https://bittrex.com/api/v1.1/public/getmarkets"
-    pairs = []
-
-    with urllib.request.urlopen(url) as url:
-        data = json.loads(url.read().decode())
-        coins = data["result"]
-        for coin in coins:
-            pairs.append(coin["BaseCurrency"] + "-" + coin["MarketCurrency"])
-
-    return pairs        
+import urllib.request, json       
 
 def getReadableCoinName(coin):
     url = "https://bittrex.com/api/v1.1/public/getcurrencies"
-    name = None
 
     with urllib.request.urlopen(url) as url:
         data = json.loads(url.read().decode())
-        coins = data["result"]
-        for trexCoin in coins:
-            if trexCoin["Currency"] == coin:
-                name = trexCoin["CurrencyLong"]
+        currencies = data["result"]
+        for currency in currencies:
+            if currency["Currency"] == coin:
+                return currency["CurrencyLong"]
 
-    return name
-
-# Returns the currency pair for the given symbol
-def getCurrencyPair(coin, coinPair = "BTC"):
-    pairs = getCurrencyPairs()
-    pair = coinPair + "-" + coin
-    if pair in pairs:
-        return pair
-    else:
-        return None
+    return None
 
 # Returns ticker data from Poloniex for the given currency pair
 def getTickerData(pair):
     pair = pair.replace("_", "-")
     url = "https://bittrex.com/api/v1.1/public/getmarketsummary?market=" + pair
-    pairs = getCurrencyPairs()
 
-    if pair in pairs:
-        with urllib.request.urlopen(url) as url:
-            ticker = json.loads(url.read().decode())
+    with urllib.request.urlopen(url) as url:
+        ticker = json.loads(url.read().decode())
+        if ticker["success"] == True:
             return ticker["result"]
-    else:
-        return None
+
+    return None
 
 def getTickerMessage(ticker):
     ticker = ticker[0]
