@@ -11,7 +11,7 @@ def getReadableCoinName(coin):
     "XBC": "BitcoinPlus", "XCP": "Counterparty", "XEM": "NEM", "XMR": "Monero", "XPM": "Primecion", "XRP": "Ripple", "GNO": "Gnosis",
     "ETH": "Ethereum", "SC": "Siacoin", "BCY": "BitCrystals", "EXP": "Expanse", "FCT": "Factom", "RADS": "Radium", "AMP": "Synereo AMP",
     "DCR": "Decred", "LSK": "Lisk", "LBC": "LBRY Credits", "STEEM": "STEEM", "SBD": "Steem Dollars", "ETC": "Ethereum Classic",
-    "REP": "Augur", "ARDR": "Ardor", "ZEC": "Zcash", "STRAT": "Stratis", "NXC": "Nexium", "PASC": "PascalCoin"}
+    "REP": "Augur", "ARDR": "Ardor", "ZEC": "Zcash", "STRAT": "Stratis", "NXC": "Nexium", "PASC": "PascalCoin", "ZRX": "0x"}
 
     return names[coin]
 
