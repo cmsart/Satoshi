@@ -1,4 +1,5 @@
 import urllib.request, json
+import discord
 
 # Returns the coin name for the given symbol
 def getReadableCoinName(coin):
@@ -31,7 +32,6 @@ def getTickerData(pair):
 def getTickerMessage(ticker, pair):
     coin = getReadableCoinName(pair.split("_")[1])
     header = "**" + coin + " (" + pair + ") - Poloniex**\n"
-    seperator = "-----------------------\n"
     price = "Current Price: `" + ticker["last"] + "`\n"
     high = "24hr High: `" + ticker["high24hr"] + "`\n"
     low = "24hr Low: `" + ticker["low24hr"] + "`\n"
@@ -41,6 +41,9 @@ def getTickerMessage(ticker, pair):
     sign = "+" if changeNum > 0 else ""
     change = "Percent Change: ```diff\n" + sign + str(changeNum) + "%\n```"
 
-    message = header + seperator + price + volume + high + low + change
+    data = price + volume + high + low + change
 
-    return message
+    embed = discord.Embed(title = header, description = data, color = 0xFF9900)
+    embed.set_footer(text = "For more information about Satoshi, type +help")
+
+    return embed

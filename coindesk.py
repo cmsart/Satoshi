@@ -1,4 +1,5 @@
 import urllib.request, json
+import discord
 
 def getSupportedCurrencies():
     return {"AED": "United Arab Emirates Dirham", "AFN": "Afghan Afghani", "ALL": "Albanian Lek", "AMD": "Armenian Dram", 
@@ -50,7 +51,9 @@ def getTickerData(currency):
 
 def getTickerMessage(ticker):
     header = "**Bitcoin (" + ticker["code"] + " - " + ticker["description"] + ") - CoinDesk Bitcoin Price Index**\n"
-    seperator = "-----------------------\n"
-    price = "Current Price: `" + str(ticker["rate_float"]) + " " + ticker["code"] + "`"
+    data = "Current Price: `" + str(ticker["rate_float"]) + " " + ticker["code"] + "`"
 
-    return header + seperator + price
+    embed = discord.Embed(title = header, description = data, color = 0xFF9900)
+    embed.set_footer(text = "For more information about Satoshi, type +help")
+
+    return embed

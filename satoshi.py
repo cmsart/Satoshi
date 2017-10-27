@@ -32,7 +32,8 @@ async def on_message(message):
                 pair = words[1].upper()
                 exchange = words[2]
             except:
-                await client.send_message(channel, "The `+coin` command must be formatted like this: `+coin <currency_pair> <exchange>`\n\n For example: `+coin BTC_ETH poloniex`")
+                err = fmtError("The `+coin` command must be formatted like this: `+coin <currency_pair> <exchange>`\n\n Example: `+coin BTC_ETH poloniex`")
+                await client.send_message(channel, embed = err)
                 return
 
             response = cmdCoin(pair, exchange)
@@ -41,7 +42,8 @@ async def on_message(message):
             try:
                 currency = words[1].upper()
             except:
-                await client.send_message(channel, "The `+bitcoin` command must be formatted like this: `+bitcoin <currency>`.\n\n For example: `+bitcoin GBP`")
+                err = fmtError("The `+bitcoin` command must be formatted like this: `+bitcoin <currency>`.\n\n Example: `+bitcoin GBP`")
+                await client.send_message(channel, embed = err)
                 return
 
             response = cmdBitcoin(currency)
@@ -51,23 +53,22 @@ async def on_message(message):
             channel = message.author
 
         if response:
-            await client.send_message(channel, response)
-        else:
-            await client.send_message(channel, "`+" + cmd + "` is not a valid command. Type `+help` to get a list of valid commands.")
+            await client.send_message(channel, embed = response)
 
     # If no command, parse message for currency requests
     else:
         calls = 0
         for word in words:
             if calls >= 3:
-                await client.send_message(channel, "You can only request data for up to 3 coins per message.")
+                err = fmtError("You can only request data for up to 3 coins per message.")
+                await client.send_message(channel, embed = err)
                 break
             if word.startswith("$"):
                 coin = word[1:].upper()
                 tickerMessage = findCoin(coin)
                 if tickerMessage:
                     calls += 1
-                    await client.send_message(channel, tickerMessage)                    
+                    await client.send_message(channel, embed = tickerMessage)                    
 
 # Returns current market data for the specified currency pair and exchange
 def cmdCoin(pair, exchange):
@@ -80,7 +81,7 @@ def cmdCoin(pair, exchange):
         if ticker:
             return bittrex.getTickerMessage(ticker)
 
-    return "The currency pair `" + pair + "` was not found on `" + exchange + "`. Please try again."
+    return fmtError("The currency pair `" + pair + "` was not found on the exchange `" + exchange + "`. Please try again.")
 
 # Returns current market data for bitcoin
 def cmdBitcoin(currency):
@@ -88,22 +89,30 @@ def cmdBitcoin(currency):
     if isinstance(ticker, dict):
         return coindesk.getTickerMessage(ticker)
     else:
-        return "`" + currency + "` is not a valid or supported currency."
+        return fmtError("`" + currency + "` is not a valid or supported currency.")
 
 # Returns help message
 def cmdHelp():
     intro = "Thank you for using Satoshi! This bot provides real time market data for cryptocurrencies on multiple exchanges.\n\n"
-    exchanges = "__**Supported Exchanges**__\n\nThe current supported exchanges are: `Poloniex`, `Bittrex`\n\n"
-    commands = "__**Commands**__\n\n"
+    embed = discord.Embed(title = "Bot Information", description = intro, color = 0xFF9900)
+
+    exchanges = "The currently supported exchanges are: `Poloniex`, `Bittrex`\n\n"
+    embed.add_field(name = "Supported Exchanges", value = exchanges)
+
     cmdCoin = "`+coin <currency pair> <exchange>` - Returns market data for the specified coin/exchange.\n\n\t- Example: `+coin BTC_LTC Poloniex`\n\n"
     cmdBitcoin = "`+bitcoin <currency>` - Returns current bitcoin price for the specified currency.\n\n\t- Example: `+bitcoin GBP`\n\n"
     cmdHelp = "`+help` - Returns information about Satoshi.\n\n"
-    lookup = """__**Quick Lookup**__\n\nYou may also retrieve data for up to three coins by simply including `$coin` anywhere in your message. 
+    embed.add_field(name = "Commands", value = cmdCoin + cmdBitcoin + cmdHelp)
+
+    lookup = """You may also retrieve data for up to three coins by simply including `$coin` anywhere in your message.\n 
 If a coin is present on mutiple exchanges, data will be returned from Poloniex. If you wish to specify the exchange, use the `+coin` command.\n 
     - Example: `Wow, look at $ETC`\n\n"""
-    github = "__**Github**__\n\nThis project can be found on Github at `https://github.com/cmsart/Satoshi`"
+    embed.add_field(name = "Quick Lookup", value = lookup)
 
-    return intro + exchanges + commands + cmdCoin + cmdBitcoin + cmdHelp + lookup.replace("\t", "") + github
+    github = "This project can be found on Github at `https://github.com/cmsart/Satoshi`"
+    embed.add_field(name = "Github", value = github)    
+
+    return embed
 
 # Finds coin for $coin command
 def findCoin(coin):
@@ -123,5 +132,12 @@ def findCoin(coin):
         return bittrex.getTickerMessage(ticker)
 
     return None
+
+# Formats error messages from string to embed
+def fmtError(error):
+    embed = discord.Embed(title = "There was an error", description = error, color = 0xFF9900)
+    embed.set_footer(text = "For more information about Satoshi, type +help")
+
+    return embed
 
 client.run(sys.argv[1])

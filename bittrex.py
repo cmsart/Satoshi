@@ -1,4 +1,5 @@
-import urllib.request, json       
+import urllib.request, json
+import discord
 
 def getReadableCoinName(coin):
     url = "https://bittrex.com/api/v1.1/public/getcurrencies"
@@ -29,7 +30,6 @@ def getTickerMessage(ticker):
     pair = ticker["MarketName"]
     coin = getReadableCoinName(pair.split("-")[1])
     header = "**" + coin + " (" + pair.replace("-", "_") + ") - Bittrex**\n"
-    seperator = "-----------------------\n"
     price = "Current Price: `" + "{:.8f}".format(ticker["Last"]) + "`\n"
     high = "24hr High: `" + "{:.8f}".format(ticker["High"]) + "`\n"
     low = "24hr Low: `" + "{:.8f}".format(ticker["Low"]) + "`\n"
@@ -39,6 +39,9 @@ def getTickerMessage(ticker):
     sign = "+" if changeNum > 0 else ""
     change = "Percent Change: ```diff\n" + sign + str(changeNum) + "%\n```"
 
-    message = header + seperator + price + volume + high + low + change
+    data = price + volume + high + low + change
 
-    return message
+    embed = discord.Embed(title = header, description = data, color = 0xFF9900)
+    embed.set_footer(text = "For more information about Satoshi, type +help")
+
+    return embed
