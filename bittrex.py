@@ -13,7 +13,7 @@ def getReadableCoinName(coin):
 
     return None
 
-# Returns ticker data from Poloniex for the given currency pair
+# Returns ticker data from Bittrex for the given currency pair
 def getTickerData(pair):
     pair = pair.replace("_", "-")
     url = "https://bittrex.com/api/v1.1/public/getmarketsummary?market=" + pair
@@ -25,11 +25,12 @@ def getTickerData(pair):
 
     return None
 
+# Returns formatted market data for the bot to send
 def getTickerMessage(ticker):
     ticker = ticker[0]
     pair = ticker["MarketName"]
     coin = getReadableCoinName(pair.split("-")[1])
-    header = "**" + coin + " (" + pair.replace("-", "_") + ") - Bittrex**\n"
+    header = coin + " (" + pair.replace("-", "_") + ") - Bittrex"
     price = "Current Price: `" + "{:.8f}".format(ticker["Last"]) + "`\n"
     high = "24hr High: `" + "{:.8f}".format(ticker["High"]) + "`\n"
     low = "24hr Low: `" + "{:.8f}".format(ticker["Low"]) + "`\n"
@@ -37,7 +38,7 @@ def getTickerMessage(ticker):
 
     changeNum = round(((ticker["Last"] - ticker["PrevDay"]) / ticker["PrevDay"]) * 100, 2)
     sign = "+" if changeNum > 0 else ""
-    change = "Percent Change: ```diff\n" + sign + str(changeNum) + "%\n```"
+    change = "Percent Change: ```diff\n" + sign + str(changeNum) + "%```"
 
     data = price + volume + high + low + change
 

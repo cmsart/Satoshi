@@ -38,6 +38,7 @@ def getSupportedCurrencies():
     "XPF": "CFP Franc", "YER": "Yemeni Rial", "ZAR": "South African Rand", "ZMK": "Zambian Kwacha (pre-2013)", "ZMW": "Zambian Kwacha", 
     "ZWL": "Zimbabwean Dollar"}
 
+# Returns ticker data from the Coindesk BPI for the given currency pair
 def getTickerData(currency):
     url = "http://api.coindesk.com/v1/bpi/currentprice/" + currency + ".json"
     currencies = getSupportedCurrencies()
@@ -49,9 +50,10 @@ def getTickerData(currency):
     else:
         return None
 
+# Returns formatted market data for the bot to send
 def getTickerMessage(ticker):
-    header = "**Bitcoin (" + ticker["code"] + " - " + ticker["description"] + ") - CoinDesk Bitcoin Price Index**\n"
-    data = "Current Price: `" + str(ticker["rate_float"]) + " " + ticker["code"] + "`"
+    header = "Bitcoin (" + ticker["code"] + " - " + ticker["description"] + ") - CoinDesk Bitcoin Price Index"
+    data = "Current Price: `" + "{:.2f}".format(ticker["rate_float"]) + " " + ticker["code"] + "`"
 
     embed = discord.Embed(title = header, description = data, color = 0xFF9900)
     embed.set_footer(text = "For more information about Satoshi, type +help")
