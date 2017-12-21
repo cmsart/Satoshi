@@ -113,7 +113,7 @@ def cmdHelp():
     embed.add_field(name = "Commands", value = cmdCoin + cmdBitcoin + cmdHelp)
 
     lookup = """You may also retrieve data for up to three coins by simply including `$coin` anywhere in your message.\n 
-If a coin is present on mutiple exchanges, data will be returned from Poloniex. If you wish to specify the exchange, use the `+coin` command.\n 
+If a coin is present on mutiple exchanges, data will be returned from Bittrex. If you wish to specify the exchange, use the `+coin` command.\n 
     - Example: `Wow, look at $ETC`\n\n"""
     embed.add_field(name = "Quick Lookup", value = lookup)
 
@@ -128,16 +128,16 @@ def findCoin(coin):
         ticker = coindesk.getTickerData("USD")
         return coindesk.getTickerMessage(ticker)
 
-    # Default to Poloniex
+    # Default to Bittrex
     pair = "BTC_" + coin
-    ticker = poloniex.getTickerData(pair)
-    if ticker:
-        return poloniex.getTickerMessage(ticker, pair)
-
-    # Check Bittrex if not found
     ticker = bittrex.getTickerData(pair)
     if ticker:
         return bittrex.getTickerMessage(ticker)
+
+    # Check Poloniex if not found
+    ticker = poloniex.getTickerData(pair)
+    if ticker:
+        return poloniex.getTickerMessage(ticker, pair)
 
     return None
 
