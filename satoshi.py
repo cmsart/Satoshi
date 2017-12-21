@@ -4,6 +4,7 @@ import poloniex
 import bittrex
 import coindesk
 import sys
+from os.path import expanduser
 
 client = discord.Client()
 
@@ -11,7 +12,14 @@ client = discord.Client()
 async def on_ready():
     print('Satoshi Online!')
     print('---------------')
-    # Include logging here    
+    # Include logging here
+    file = open(expanduser("~/server_log.txt"), "w") 
+    serverCount = 0
+    for server in client.servers:
+        file.write(server.name + "\n")
+        serverCount += 1
+    file.write("\nConnected to " + str(serverCount) + " servers.")
+    file.close()
 
 @client.event
 async def on_message(message):

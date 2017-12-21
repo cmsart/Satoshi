@@ -1,4 +1,5 @@
 import urllib.request, json
+from urllib.request import Request, urlopen
 import discord
 
 def getSupportedCurrencies():
@@ -41,10 +42,11 @@ def getSupportedCurrencies():
 # Returns ticker data from the Coindesk BPI for the given currency pair
 def getTickerData(currency):
     url = "http://api.coindesk.com/v1/bpi/currentprice/" + currency + ".json"
+    url_request = Request(url, headers = {"User-Agent": "Mozilla/5.0"})
     currencies = getSupportedCurrencies()
 
     if currency in currencies:
-        with urllib.request.urlopen(url) as url:
+        with urlopen(url_request) as url:
             data = json.loads(url.read().decode())
             return data["bpi"][currency]
     else:
