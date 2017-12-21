@@ -2,6 +2,7 @@ import discord
 import asyncio
 import poloniex
 import bittrex
+import binance
 import coindesk
 import sys
 from os.path import expanduser
@@ -87,7 +88,11 @@ def cmdCoin(pair, exchange):
     elif exchange == 'bittrex':
         ticker = bittrex.getTickerData(pair)
         if ticker:
-            return bittrex.getTickerMessage(ticker)
+            return bittrex.getTickerMessage(ticker, pair)
+    elif exchange == 'binance':
+        ticker = binance.getTickerData(pair)
+        if ticker:
+            return binance.getTickerMessage(ticker, pair)
 
     return fmtError("The currency pair `" + pair + "` was not found on the exchange `" + exchange + "`. Please try again.")
 
@@ -104,7 +109,7 @@ def cmdHelp():
     intro = "Thank you for using Satoshi! This bot provides real time market data for cryptocurrencies on multiple exchanges.\n\n"
     embed = discord.Embed(title = "Bot Information", description = intro, color = 0xFF9900)
 
-    exchanges = "The currently supported exchanges are: `Poloniex`, `Bittrex`\n\n"
+    exchanges = "The exchanges currently supported are: `Bittrex`, `Poloniex`, `Binance`\n\n"
     embed.add_field(name = "Supported Exchanges", value = exchanges)
 
     cmdCoin = "`+coin <currency pair> <exchange>` - Returns market data for the specified coin/exchange.\n\n\t- Example: `+coin BTC_LTC Poloniex`\n\n"
@@ -132,12 +137,17 @@ def findCoin(coin):
     pair = "BTC_" + coin
     ticker = bittrex.getTickerData(pair)
     if ticker:
-        return bittrex.getTickerMessage(ticker)
+        return bittrex.getTickerMessage(ticker, pair)
 
     # Check Poloniex if not found
     ticker = poloniex.getTickerData(pair)
     if ticker:
         return poloniex.getTickerMessage(ticker, pair)
+
+    # Check Binance
+    ticker = binance.getTickerData(pair)
+    if ticker:
+        return binance.getTickerMessage(ticker, pair)
 
     return None
 

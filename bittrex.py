@@ -1,11 +1,12 @@
-import urllib.request, json
+import requests
 import discord
 
 def getReadableCoinName(coin):
     url = "https://bittrex.com/api/v1.1/public/getcurrencies"
 
-    with urllib.request.urlopen(url) as url:
-        data = json.loads(url.read().decode())
+    ticker = requests.get(url)
+    if ticker.status_code == 200:
+        data = ticker.json()
         currencies = data["result"]
         for currency in currencies:
             if currency["Currency"] == coin:
@@ -18,19 +19,17 @@ def getTickerData(pair):
     pair = pair.replace("_", "-")
     url = "https://bittrex.com/api/v1.1/public/getmarketsummary?market=" + pair
 
-    with urllib.request.urlopen(url) as url:
-        ticker = json.loads(url.read().decode())
-        if ticker["success"] == True:
-            return ticker["result"]
+    ticker = requests.get(url)
+    if ticker.status_code == 200:
+        return ticker.json()["result"]
 
     return None
 
 # Returns formatted market data for the bot to send
-def getTickerMessage(ticker):
+def getTickerMessage(ticker, pair):
     ticker = ticker[0]
-    pair = ticker["MarketName"]
-    coin = getReadableCoinName(pair.split("-")[1])
-    header = coin + " (" + pair.replace("-", "_") + ") - Bittrex"
+    coin = getReadableCoinName(pair.split("_")[1])
+    header = coin + " (" + pair + ") - Bittrex"
     price = "Current Price: `" + "{:.8f}".format(ticker["Last"]) + "`\n"
     high = "24hr High: `" + "{:.8f}".format(ticker["High"]) + "`\n"
     low = "24hr Low: `" + "{:.8f}".format(ticker["Low"]) + "`\n"

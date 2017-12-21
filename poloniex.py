@@ -1,4 +1,4 @@
-import urllib.request, json
+import requests
 import discord
 
 # Returns the coin name for the given symbol
@@ -21,8 +21,9 @@ def getReadableCoinName(coin):
 def getTickerData(pair):
     url = "https://poloniex.com/public?command=returnTicker"
 
-    with urllib.request.urlopen(url) as url:
-        ticker = json.loads(url.read().decode())
+    ticker = requests.get(url)
+    if ticker.status_code == 200:
+        ticker = ticker.json()
         if pair in ticker:
             return ticker[pair]
 
